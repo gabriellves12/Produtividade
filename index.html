@@ -4,8 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Oi</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <p>oi</p>
+
+  <script>
+    const SUPABASE_URL = 'https://cbupvqgudgtbeelavngp.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidXB2cWd1ZGd0YmVlbGF2bmdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NjAwMTEsImV4cCI6MjA4OTUzNjAxMX0.VaudTeJyxB611ghBu_O76a5-IeCL3OkANti5wxk893s'
+
+    const { createClient } = supabase
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    console.log('Supabase conectado:', db)
+  </script>
 </body>
 </html>
