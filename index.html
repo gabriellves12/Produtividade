@@ -399,21 +399,231 @@
     .workout-meta  { font-size: 12px; color: var(--text2); margin-top: 3px; }
     .workout-date  { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-    /* ── GOAL CARD ───────────────────────────────────────── */
-    .goal-card {
+    /* ── METAS ───────────────────────────────────────────── */
+    .quarter-section { margin-bottom: 12px; }
+
+    .quarter-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
       background: var(--s2);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.15s;
     }
 
-    .goal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-    .goal-name   { font-size: 16px; font-weight: 700; }
-    .goal-desc   { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
-    .goal-pct    { font-size: 22px; font-weight: 800; flex-shrink: 0; }
-    .goal-footer { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
-    .goal-date   { font-size: 12px; color: var(--text2); margin-left: auto; }
+    .quarter-header:hover { border-color: var(--accent-border); }
+    .quarter-header.open  { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
+
+    .quarter-label {
+      font-size: 13px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--accent);
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-border);
+      padding: 3px 10px; border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .quarter-name  { font-size: 15px; font-weight: 700; flex: 1; }
+    .quarter-sub   { font-size: 12px; color: var(--text2); }
+
+    .quarter-pct {
+      font-size: 13px; font-weight: 700;
+      color: var(--text2);
+      flex-shrink: 0;
+    }
+
+    .quarter-arrow {
+      color: var(--text3); font-size: 12px;
+      transition: transform 0.2s; flex-shrink: 0;
+    }
+
+    .quarter-header.open .quarter-arrow { transform: rotate(180deg); }
+
+    .quarter-body {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 16px;
+      display: none;
+    }
+
+    .quarter-body.open { display: block; }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .cat-col {
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      min-height: 120px;
+    }
+
+    .cat-header {
+      display: flex; align-items: center; gap: 7px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cat-icon  { font-size: 16px; }
+    .cat-name  { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; flex: 1; }
+    .cat-count { font-size: 11px; color: var(--text2); background: var(--s4); padding: 1px 6px; border-radius: 10px; }
+
+    .meta-item {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      transition: border-color 0.15s;
+    }
+
+    .meta-item:hover { border-color: var(--accent-border); }
+
+    .meta-item-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .meta-item-title { font-size: 13px; font-weight: 700; line-height: 1.4; flex: 1; }
+
+    .meta-del {
+      background: none; border: none;
+      color: var(--text3); cursor: pointer;
+      font-size: 16px; opacity: 0;
+      transition: opacity 0.15s; line-height: 1;
+      padding: 0 2px; flex-shrink: 0;
+    }
+
+    .meta-item:hover .meta-del { opacity: 1; }
+    .meta-del:hover { color: var(--accent); }
+
+    .meta-due {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 600;
+      color: var(--text2);
+      background: var(--s4);
+      border: 1px solid var(--border);
+      padding: 2px 7px; border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .meta-due.overdue { color: var(--accent); border-color: var(--accent-border); background: var(--accent-bg); }
+
+    .checklist-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 4px 0;
+    }
+
+    .cl-check {
+      width: 15px; height: 15px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer; flex-shrink: 0;
+      margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .cl-check.done { background: var(--accent); border-color: var(--accent); }
+    .cl-check.done::after { content: '✓'; color: #fff; font-size: 9px; font-weight: 800; }
+
+    .cl-text { font-size: 12px; line-height: 1.4; flex: 1; }
+    .cl-text.done { text-decoration: line-through; color: var(--text2); }
+
+    .cl-del {
+      background: none; border: none;
+      color: var(--text3); cursor: pointer;
+      font-size: 14px; opacity: 0;
+      transition: opacity 0.15s; padding: 0;
+    }
+
+    .checklist-item:hover .cl-del { opacity: 1; }
+    .cl-del:hover { color: var(--accent); }
+
+    .cl-add-row {
+      display: flex; gap: 6px;
+      margin-top: 8px;
+    }
+
+    .cl-add-input {
+      flex: 1;
+      background: var(--s4);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .cl-add-input:focus { border-color: var(--accent); }
+    .cl-add-input::placeholder { color: var(--text3); }
+
+    .cl-add-btn {
+      background: var(--s4);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 16px; line-height: 1;
+      padding: 4px 8px;
+      transition: all 0.15s;
+    }
+
+    .cl-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .meta-progress-wrap {
+      height: 3px; background: var(--s4);
+      border-radius: 2px; overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .meta-progress-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.4s; }
+
+    .cat-add-btn {
+      width: 100%;
+      padding: 8px;
+      border-radius: 7px;
+      border: 1px dashed var(--border);
+      background: transparent;
+      color: var(--text3);
+      cursor: pointer; font-size: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      transition: all 0.15s; margin-top: 4px;
+      font-family: inherit;
+    }
+
+    .cat-add-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+
+    .metas-year-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .year-select {
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: var(--text);
+      font-size: 14px; font-weight: 700;
+      outline: none; cursor: pointer;
+      font-family: inherit;
+    }
 
     /* ── PROJECT CARD ────────────────────────────────────── */
     .project-card {
@@ -759,15 +969,19 @@
   <!-- METAS                                               -->
   <!-- ═══════════════════════════════════════════════════ -->
   <div class="view" id="view-metas">
-    <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
-      <div>
-        <div class="page-title">Metas</div>
-        <div class="page-sub">Projetos pessoais e objetivos de vida</div>
-      </div>
-      <button class="btn btn-primary" style="margin-top:6px" onclick="openMetaModal()">+ Nova Meta</button>
+    <div class="page-header">
+      <div class="page-title">Metas</div>
+      <div class="page-sub">Financeiro · Educação · Corpo · Vida</div>
     </div>
-
-    <div class="scroll-body" id="metas-body" style="margin-top:20px">
+    <div class="scroll-body" style="margin-top:20px">
+      <div class="metas-year-header">
+        <div style="font-size:13px;color:var(--text2)">Ano</div>
+        <select class="year-select" id="metasYearSelect" onchange="renderMetas()">
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+        </select>
+      </div>
       <div id="list-metas"></div>
     </div>
   </div>
@@ -849,41 +1063,39 @@
 <div class="overlay" id="overlay-meta" onclick="closeOverlay('meta',event)">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title" id="meta-modal-title">Nova Meta</div>
+      <div class="modal-title">Nova Meta</div>
       <button class="close-btn" onclick="closeOverlay('meta')">×</button>
     </div>
 
     <div class="f-group">
-      <label class="f-label">Nome da Meta</label>
-      <input class="f-input" id="m-nome" placeholder="Ex: Correr uma meia maratona...">
-    </div>
-
-    <div class="f-group">
-      <label class="f-label">Descrição</label>
-      <textarea class="f-textarea" id="m-desc" placeholder="Detalhe sua meta..."></textarea>
+      <label class="f-label">Título da Meta</label>
+      <input class="f-input" id="m-titulo" placeholder="Ex: Juntar R$ 10k de reserva...">
     </div>
 
     <div class="f-row">
       <div class="f-group">
-        <label class="f-label">Prazo</label>
-        <input class="f-input" type="date" id="m-prazo">
+        <label class="f-label">Trimestre</label>
+        <select class="f-select" id="m-quarter">
+          <option value="Q1">Q1 — Jan a Mar</option>
+          <option value="Q2">Q2 — Abr a Jun</option>
+          <option value="Q3">Q3 — Jul a Set</option>
+          <option value="Q4">Q4 — Out a Dez</option>
+        </select>
       </div>
       <div class="f-group">
-        <label class="f-label">Cor</label>
-        <select class="f-select" id="m-cor">
-          <option value="#e11d48">Vermelho</option>
-          <option value="#22c55e">Verde</option>
-          <option value="#f97316">Laranja</option>
-          <option value="#ec4899">Rosa</option>
-          <option value="#06b6d4">Ciano</option>
-          <option value="#eab308">Amarelo</option>
+        <label class="f-label">Categoria</label>
+        <select class="f-select" id="m-cat">
+          <option value="financeiro">💰 Financeiro</option>
+          <option value="educacao">📚 Educação</option>
+          <option value="corpo">💪 Corpo</option>
+          <option value="vida">🌱 Vida</option>
         </select>
       </div>
     </div>
 
     <div class="f-group">
-      <label class="f-label">Progresso: <span id="m-pct-label">0%</span></label>
-      <input type="range" min="0" max="100" value="0" id="m-progresso" oninput="document.getElementById('m-pct-label').textContent=this.value+'%'">
+      <label class="f-label">Data-alvo</label>
+      <input class="f-input" type="date" id="m-due">
     </div>
 
     <div class="modal-footer">
@@ -965,6 +1177,12 @@ let data = {
   treinos:  LS.get('treinos')  || [],
   metas:    LS.get('metas')    || [],
   projetos: LS.get('projetos') || [],
+}
+
+// Migrate old metas format (array of {nome,desc,...}) to new format
+if (data.metas.length && data.metas[0].nome !== undefined) {
+  data.metas = []
+  save()
 }
 
 function save() {
@@ -1070,19 +1288,27 @@ function renderHoje() {
     </div>`
 
   // Metas
-  const metasEl = document.getElementById('hoje-metas')
-  const activeMetas = data.metas.filter(m => m.progresso < 100).slice(0, 3)
-  if (activeMetas.length === 0) {
-    metasEl.innerHTML = `<div class="empty" style="grid-column:span 3"><div class="empty-icon">🎯</div>Nenhuma meta em andamento</div>`
+  const metasEl   = document.getElementById('hoje-metas')
+  const year      = new Date().getFullYear()
+  const curQ      = currentQuarter()
+  const qMetas    = data.metas.filter(m => m.quarter === curQ && m.year === year)
+  const active    = qMetas.filter(m => metaProgress(m) < 100).slice(0, 3)
+  if (active.length === 0) {
+    metasEl.innerHTML = `<div class="empty" style="grid-column:span 3"><div class="empty-icon">🎯</div>Nenhuma meta em ${curQ} ainda</div>`
   } else {
-    metasEl.innerHTML = activeMetas.map(m => `
+    const catIcons = { financeiro:'💰', educacao:'📚', corpo:'💪', vida:'🌱' }
+    metasEl.innerHTML = active.map(m => {
+      const pct = metaProgress(m)
+      return `
       <div style="background:var(--s3);border:1px solid var(--border);border-radius:12px;padding:14px">
-        <div style="font-size:13px;font-weight:700;margin-bottom:6px">${m.nome}</div>
-        <div style="font-size:20px;font-weight:800;color:${m.cor}">${m.progresso}%</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:5px">${catIcons[m.category] || '🎯'} ${m.category}</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">${m.title}</div>
+        <div style="font-size:20px;font-weight:800;color:var(--accent)">${pct}%</div>
         <div class="progress-wrap">
-          <div class="progress-fill" style="width:${m.progresso}%;background:${m.cor}"></div>
+          <div class="progress-fill" style="width:${pct}%;background:var(--accent)"></div>
         </div>
-      </div>`).join('')
+      </div>`
+    }).join('')
   }
 }
 
@@ -1249,91 +1475,182 @@ function deleteTreino(id) {
 }
 
 // ── METAS ─────────────────────────────────────────────────
+const QUARTERS = [
+  { id: 'Q1', label: 'Q1', name: 'Janeiro — Março' },
+  { id: 'Q2', label: 'Q2', name: 'Abril — Junho' },
+  { id: 'Q3', label: 'Q3', name: 'Julho — Setembro' },
+  { id: 'Q4', label: 'Q4', name: 'Outubro — Dezembro' },
+]
+
+const CATS = [
+  { id: 'financeiro', icon: '💰', name: 'Financeiro' },
+  { id: 'educacao',   icon: '📚', name: 'Educação'   },
+  { id: 'corpo',      icon: '💪', name: 'Corpo'      },
+  { id: 'vida',       icon: '🌱', name: 'Vida'       },
+]
+
+function currentQuarter() {
+  const m = new Date().getMonth()
+  if (m < 3) return 'Q1'
+  if (m < 6) return 'Q2'
+  if (m < 9) return 'Q3'
+  return 'Q4'
+}
+
+function metaProgress(meta) {
+  if (!meta.checklist || meta.checklist.length === 0) return 0
+  return Math.round((meta.checklist.filter(c => c.done).length / meta.checklist.length) * 100)
+}
+
 function renderMetas() {
-  const el = document.getElementById('list-metas')
-  if (data.metas.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🎯</div>Nenhuma meta cadastrada ainda</div>`
-    return
-  }
+  const year = Number(document.getElementById('metasYearSelect')?.value || new Date().getFullYear())
+  const el   = document.getElementById('list-metas')
+  const curQ = currentQuarter()
 
-  el.innerHTML = data.metas.map(m => `
-    <div class="goal-card">
-      <div class="goal-header">
-        <div>
-          <div class="goal-name">${m.nome}</div>
-          ${m.desc ? `<div class="goal-desc">${m.desc}</div>` : ''}
+  el.innerHTML = QUARTERS.map(q => {
+    const qMetas = data.metas.filter(m => m.quarter === q.id && m.year === year)
+    const allCl  = qMetas.flatMap(m => m.checklist || [])
+    const doneCl = allCl.filter(c => c.done).length
+    const pct    = allCl.length ? Math.round((doneCl / allCl.length) * 100) : 0
+    const isOpen = q.id === curQ
+
+    return `
+    <div class="quarter-section">
+      <div class="quarter-header ${isOpen ? 'open' : ''}" onclick="toggleQuarter('${q.id}')">
+        <div class="quarter-label">${q.label}</div>
+        <div class="quarter-name">${q.name}</div>
+        <div class="quarter-sub">${year}</div>
+        <div class="quarter-pct">${pct}% concluído</div>
+        <div class="quarter-arrow">▼</div>
+      </div>
+      <div class="quarter-body ${isOpen ? 'open' : ''}" id="qbody-${q.id}">
+        <div class="cat-grid">
+          ${CATS.map(cat => {
+            const catMetas = qMetas.filter(m => m.category === cat.id)
+            return `
+            <div class="cat-col">
+              <div class="cat-header">
+                <span class="cat-icon">${cat.icon}</span>
+                <span class="cat-name">${cat.name}</span>
+                <span class="cat-count">${catMetas.length}</span>
+              </div>
+              ${catMetas.map(m => metaItemHtml(m)).join('')}
+              <button class="cat-add-btn" onclick="openMetaModal('${q.id}','${cat.id}')">＋ Meta</button>
+            </div>`
+          }).join('')}
         </div>
-        <div class="goal-pct" style="color:${m.cor}">${m.progresso}%</div>
       </div>
-      <div class="progress-wrap" style="margin-top:14px">
-        <div class="progress-fill" style="width:${m.progresso}%;background:${m.cor}"></div>
-      </div>
-      <div class="goal-footer">
-        <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="editMeta('${m.id}')">Editar</button>
-        <button onclick="deleteMeta('${m.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px" title="Excluir">Excluir</button>
-        ${m.prazo ? `<div class="goal-date">📅 ${formatDate(m.prazo)}</div>` : ''}
-      </div>
-    </div>`).join('')
+    </div>`
+  }).join('')
 }
 
-function openMetaModal() {
-  editingId = null
-  document.getElementById('meta-modal-title').textContent = 'Nova Meta'
-  document.getElementById('m-nome').value = ''
-  document.getElementById('m-desc').value = ''
-  document.getElementById('m-prazo').value = ''
-  document.getElementById('m-cor').value = '#e11d48'
-  document.getElementById('m-progresso').value = 0
-  document.getElementById('m-pct-label').textContent = '0%'
-  document.getElementById('overlay-meta').classList.add('open')
+function metaItemHtml(m) {
+  const pct = metaProgress(m)
+  const checklist = m.checklist || []
+  const today = new Date().toISOString().split('T')[0]
+  const overdue = m.dueDate && m.dueDate < today && pct < 100
+
+  return `
+  <div class="meta-item" id="meta-${m.id}">
+    <div class="meta-item-header">
+      <div class="meta-item-title">${m.title}</div>
+      <button class="meta-del" onclick="deleteMeta('${m.id}')">×</button>
+    </div>
+    ${m.dueDate ? `<div class="meta-due ${overdue ? 'overdue' : ''}">📅 ${formatDate(m.dueDate)}</div>` : ''}
+    <div id="cl-list-${m.id}">
+      ${checklist.map(c => clItemHtml(m.id, c)).join('')}
+    </div>
+    <div class="cl-add-row">
+      <input class="cl-add-input" id="cl-inp-${m.id}" placeholder="Adicionar item..." onkeydown="if(event.key==='Enter') addChecklistItem('${m.id}')">
+      <button class="cl-add-btn" onclick="addChecklistItem('${m.id}')">+</button>
+    </div>
+    ${checklist.length > 0 ? `
+    <div class="meta-progress-wrap">
+      <div class="meta-progress-fill" style="width:${pct}%"></div>
+    </div>` : ''}
+  </div>`
 }
 
-function editMeta(id) {
-  const m = data.metas.find(x => x.id === id)
-  if (!m) return
-  editingId = id
-  document.getElementById('meta-modal-title').textContent = 'Editar Meta'
-  document.getElementById('m-nome').value = m.nome
-  document.getElementById('m-desc').value = m.desc || ''
-  document.getElementById('m-prazo').value = m.prazo || ''
-  document.getElementById('m-cor').value = m.cor
-  document.getElementById('m-progresso').value = m.progresso
-  document.getElementById('m-pct-label').textContent = m.progresso + '%'
+function clItemHtml(metaId, c) {
+  return `
+  <div class="checklist-item" id="cli-${c.id}">
+    <div class="cl-check ${c.done ? 'done' : ''}" onclick="toggleClItem('${metaId}','${c.id}')"></div>
+    <div class="cl-text ${c.done ? 'done' : ''}">${c.text}</div>
+    <button class="cl-del" onclick="deleteClItem('${metaId}','${c.id}')">×</button>
+  </div>`
+}
+
+function toggleQuarter(qid) {
+  const header = document.querySelector(`.quarter-header[onclick="toggleQuarter('${qid}')"]`)
+  const body   = document.getElementById('qbody-' + qid)
+  header.classList.toggle('open')
+  body.classList.toggle('open')
+}
+
+function openMetaModal(quarter, category) {
+  const curQ = quarter || currentQuarter()
+  document.getElementById('m-quarter').value = curQ
+  document.getElementById('m-cat').value     = category || 'financeiro'
+  document.getElementById('m-titulo').value  = ''
+  document.getElementById('m-due').value     = ''
   document.getElementById('overlay-meta').classList.add('open')
+  setTimeout(() => document.getElementById('m-titulo').focus(), 100)
 }
 
 function saveMeta() {
-  const nome = document.getElementById('m-nome').value.trim()
-  if (!nome) { toast('Informe o nome da meta!', '⚠️'); return }
+  const title = document.getElementById('m-titulo').value.trim()
+  if (!title) { toast('Informe o título!', '⚠️'); return }
 
+  const year = Number(document.getElementById('metasYearSelect')?.value || new Date().getFullYear())
   const meta = {
-    nome,
-    desc:      document.getElementById('m-desc').value.trim(),
-    prazo:     document.getElementById('m-prazo').value,
-    cor:       document.getElementById('m-cor').value,
-    progresso: Number(document.getElementById('m-progresso').value),
+    id:        uid(),
+    title,
+    quarter:   document.getElementById('m-quarter').value,
+    year,
+    category:  document.getElementById('m-cat').value,
+    dueDate:   document.getElementById('m-due').value || null,
+    checklist: [],
   }
 
-  if (editingId) {
-    const idx = data.metas.findIndex(m => m.id === editingId)
-    if (idx !== -1) data.metas[idx] = { ...data.metas[idx], ...meta }
-    toast('Meta atualizada!', '🎯')
-  } else {
-    data.metas.push({ id: uid(), ...meta })
-    toast('Meta criada!', '🎯')
-  }
-
+  data.metas.push(meta)
   save()
   closeOverlay('meta')
   renderMetas()
-  if (currentView === 'hoje') renderHoje()
+  toast('Meta criada!', '🎯')
 }
 
 function deleteMeta(id) {
   data.metas = data.metas.filter(m => m.id !== id)
   save()
   renderMetas()
-  if (currentView === 'hoje') renderHoje()
+}
+
+function addChecklistItem(metaId) {
+  const inp  = document.getElementById('cl-inp-' + metaId)
+  const text = inp.value.trim()
+  if (!text) return
+  const meta = data.metas.find(m => m.id === metaId)
+  if (!meta) return
+  if (!meta.checklist) meta.checklist = []
+  meta.checklist.push({ id: uid(), text, done: false })
+  save()
+  inp.value = ''
+  renderMetas()
+}
+
+function toggleClItem(metaId, clId) {
+  const meta = data.metas.find(m => m.id === metaId)
+  if (!meta) return
+  const item = meta.checklist.find(c => c.id === clId)
+  if (item) { item.done = !item.done; save(); renderMetas() }
+}
+
+function deleteClItem(metaId, clId) {
+  const meta = data.metas.find(m => m.id === metaId)
+  if (!meta) return
+  meta.checklist = meta.checklist.filter(c => c.id !== clId)
+  save()
+  renderMetas()
 }
 
 // ── TRABALHO ──────────────────────────────────────────────
@@ -1490,6 +1807,12 @@ function formatDate(dateStr) {
 }
 
 // ── BOOT ──────────────────────────────────────────────────
+const curYear = new Date().getFullYear().toString()
+const yearSel = document.getElementById('metasYearSelect')
+if (yearSel) {
+  yearSel.value = curYear
+  if (!yearSel.value) yearSel.options[0].selected = true
+}
 renderHoje()
 </script>
 </body>
