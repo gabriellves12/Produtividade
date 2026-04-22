@@ -5,35 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Central</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.cdnfonts.com">
+  <link href="https://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg:      #0a0a0f;
-      --s1:      #111118;
-      --s2:      #17171f;
-      --s3:      #1e1e28;
-      --s4:      #26263a;
-      --border:  #2a2a3c;
-      --text:    #e8e8f2;
-      --text2:   #7070a0;
-      --text3:   #44445a;
-      --indigo:  #6366f1;
-      --indigo2: #818cf8;
+      --bg:      #000000;
+      --s1:      #0a0a0a;
+      --s2:      #111111;
+      --s3:      #181818;
+      --s4:      #222222;
+      --border:  #2a2a2a;
+      --text:    #ffffff;
+      --text2:   #777777;
+      --text3:   #3a3a3a;
+      --accent:  #e11d48;
+      --accent2: #f43f5e;
+      --accent-bg:   rgba(225,29,72,0.08);
+      --accent-border: rgba(225,29,72,0.25);
       --green:   #22c55e;
       --yellow:  #eab308;
-      --red:     #ef4444;
       --blue:    #3b82f6;
       --orange:  #f97316;
-      --pink:    #ec4899;
-      --cyan:    #06b6d4;
       --r:       10px;
     }
 
     html, body { height: 100%; overflow: hidden; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      font-family: 'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -60,16 +61,17 @@
 
     .brand-icon {
       width: 34px; height: 34px;
-      background: var(--indigo);
-      border-radius: 9px;
+      background: var(--accent);
+      border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
       font-size: 17px;
     }
 
     .brand-name {
       font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .nav-item {
@@ -89,8 +91,8 @@
     .nav-item:hover { background: var(--s3); color: var(--text); }
 
     .nav-item.active {
-      background: rgba(99,102,241,0.12);
-      color: var(--indigo2);
+      background: var(--accent-bg);
+      color: var(--accent2);
     }
 
     .nav-icon { font-size: 17px; width: 20px; text-align: center; flex-shrink: 0; }
@@ -119,7 +121,7 @@
     .ava {
       width: 32px; height: 32px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--indigo), var(--pink));
+      background: var(--accent);
       display: flex; align-items: center; justify-content: center;
       font-size: 12px; font-weight: 700; color: #fff;
       flex-shrink: 0;
@@ -180,7 +182,7 @@
     }
 
     .tab:hover { color: var(--text); }
-    .tab.active { color: var(--indigo2); border-bottom-color: var(--indigo); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     /* ── SCROLL BODY ─────────────────────────────────────── */
     .scroll-body {
@@ -298,11 +300,11 @@
       transition: border-color 0.15s;
     }
 
-    .add-input:focus { border-color: var(--indigo); }
+    .add-input:focus { border-color: var(--accent); }
     .add-input::placeholder { color: var(--text3); }
 
     .add-btn {
-      background: var(--indigo);
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 9px;
@@ -314,7 +316,7 @@
       white-space: nowrap;
     }
 
-    .add-btn:hover { background: var(--indigo2); }
+    .add-btn:hover { background: var(--accent2); }
 
     /* ── SECTION HEADER ──────────────────────────────────── */
     .section-hd {
@@ -352,10 +354,10 @@
       font-family: inherit;
     }
 
-    .btn-primary { background: var(--indigo); color: #fff; }
-    .btn-primary:hover { background: var(--indigo2); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); }
     .btn-ghost { background: var(--s3); color: var(--text2); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: var(--text); border-color: var(--indigo); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
 
     /* ── PROGRESS ────────────────────────────────────────── */
     .progress-wrap {
@@ -502,7 +504,7 @@
       transition: border-color 0.15s;
     }
 
-    .f-input:focus, .f-textarea:focus, .f-select:focus { border-color: var(--indigo); }
+    .f-input:focus, .f-textarea:focus, .f-select:focus { border-color: var(--accent); }
     .f-textarea { resize: vertical; min-height: 80px; }
     .f-select option { background: var(--s2); }
     .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -543,7 +545,7 @@
     /* ── RANGE ───────────────────────────────────────────── */
     input[type=range] {
       width: 100%;
-      accent-color: var(--indigo);
+      accent-color: var(--accent);
       cursor: pointer;
     }
 
@@ -869,7 +871,7 @@
       <div class="f-group">
         <label class="f-label">Cor</label>
         <select class="f-select" id="m-cor">
-          <option value="#6366f1">Índigo</option>
+          <option value="#e11d48">Vermelho</option>
           <option value="#22c55e">Verde</option>
           <option value="#f97316">Laranja</option>
           <option value="#ec4899">Rosa</option>
@@ -923,7 +925,7 @@
       <div class="f-group">
         <label class="f-label">Cor</label>
         <select class="f-select" id="p-cor">
-          <option value="#6366f1">Índigo</option>
+          <option value="#e11d48">Vermelho</option>
           <option value="#22c55e">Verde</option>
           <option value="#f97316">Laranja</option>
           <option value="#ec4899">Rosa</option>
@@ -1036,7 +1038,7 @@ function renderHoje() {
     const icons = { academia: '🏋️', corrida: '🏃', bike: '🚴' }
     treinoEl.innerHTML = `
       <div class="workout-item" style="margin:0">
-        <div class="workout-icon" style="background:rgba(99,102,241,0.1)">${icons[treinoHoje.tipo]}</div>
+        <div class="workout-icon" style="background:var(--accent-bg)">${icons[treinoHoje.tipo]}</div>
         <div class="workout-info">
           <div class="workout-title">${treinoHoje.titulo || treinoHoje.tipo}</div>
           <div class="workout-meta">${treinoHoje.duracao ? treinoHoje.duracao + ' min' : ''}${treinoHoje.distancia ? ' · ' + treinoHoje.distancia + ' km' : ''}</div>
@@ -1059,7 +1061,7 @@ function renderHoje() {
   const totalT = data.tasks.dia.filter(t => !t.done).length + data.tasks.semana.filter(t => !t.done).length
   statsEl.innerHTML = `
     <div style="text-align:center;padding:10px;background:var(--s3);border-radius:10px;border:1px solid var(--border)">
-      <div style="font-size:22px;font-weight:800;color:var(--indigo2)">${weekTreinos.length}</div>
+      <div style="font-size:22px;font-weight:800;color:var(--accent2)">${weekTreinos.length}</div>
       <div style="font-size:11px;color:var(--text2);margin-top:2px">Treinos</div>
     </div>
     <div style="text-align:center;padding:10px;background:var(--s3);border-radius:10px;border:1px solid var(--border)">
@@ -1155,7 +1157,7 @@ function renderTreinos() {
 
 function renderTreinosTab(tipo) {
   const icons   = { academia: '🏋️', corrida: '🏃', bike: '🚴' }
-  const colors  = { academia: '#6366f1', corrida: '#22c55e', bike: '#f97316' }
+  const colors  = { academia: '#e11d48', corrida: '#22c55e', bike: '#f97316' }
   const list    = data.treinos.filter(t => t.tipo === tipo)
   const listEl  = document.getElementById('list-' + tipo)
   const statsEl = document.getElementById('stats-' + tipo)
@@ -1183,7 +1185,7 @@ function renderTreinosTab(tipo) {
 
   listEl.innerHTML = list.sort((a,b) => b.data.localeCompare(a.data)).map(t => `
     <div class="workout-item">
-      <div class="workout-icon" style="background:rgba(99,102,241,0.1)">${icons[t.tipo]}</div>
+      <div class="workout-icon" style="background:var(--accent-bg)">${icons[t.tipo]}</div>
       <div class="workout-info">
         <div class="workout-title">${t.titulo || tipo}</div>
         <div class="workout-meta">
@@ -1280,7 +1282,7 @@ function openMetaModal() {
   document.getElementById('m-nome').value = ''
   document.getElementById('m-desc').value = ''
   document.getElementById('m-prazo').value = ''
-  document.getElementById('m-cor').value = '#6366f1'
+  document.getElementById('m-cor').value = '#e11d48'
   document.getElementById('m-progresso').value = 0
   document.getElementById('m-pct-label').textContent = '0%'
   document.getElementById('overlay-meta').classList.add('open')
@@ -1345,7 +1347,7 @@ function renderTrabalho() {
   const statusCfg = {
     ativo:     { label: 'Ativo',     bg: 'rgba(34,197,94,0.15)',   color: '#22c55e' },
     pausado:   { label: 'Pausado',   bg: 'rgba(234,179,8,0.15)',   color: '#eab308' },
-    concluido: { label: 'Concluído', bg: 'rgba(99,102,241,0.15)', color: '#818cf8' },
+    concluido: { label: 'Concluído', bg: 'rgba(255,255,255,0.06)', color: '#aaaaaa' },
   }
 
   el.innerHTML = data.projetos.map(p => {
@@ -1398,7 +1400,7 @@ function openProjetoModal() {
   document.getElementById('p-nome').value = ''
   document.getElementById('p-desc').value = ''
   document.getElementById('p-status').value = 'ativo'
-  document.getElementById('p-cor').value = '#6366f1'
+  document.getElementById('p-cor').value = '#e11d48'
   document.getElementById('overlay-projeto').classList.add('open')
 }
 
