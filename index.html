@@ -776,6 +776,99 @@
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+
+    /* ── FINANCEIRO ──────────────────────────────────────── */
+    .fin-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .fin-stat {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+
+    .fin-stat-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); }
+    .fin-stat-value { font-size: 28px; font-weight: 800; margin-top: 6px; letter-spacing: -1px; }
+    .fin-stat-sub   { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+    .fin-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+    }
+
+    .lancamento-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px;
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      margin-bottom: 6px;
+      transition: border-color 0.15s;
+    }
+
+    .lancamento-item:hover { border-color: var(--border); }
+
+    .lanc-icon {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+
+    .lanc-info   { flex: 1; min-width: 0; }
+    .lanc-desc   { font-size: 13px; font-weight: 600; }
+    .lanc-meta   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .lanc-valor  { font-size: 14px; font-weight: 800; flex-shrink: 0; }
+    .lanc-del    {
+      background: none; border: none; color: var(--text3);
+      cursor: pointer; font-size: 16px; padding: 0 2px;
+      opacity: 0; transition: opacity 0.15s;
+    }
+
+    .lancamento-item:hover .lanc-del { opacity: 1; }
+    .lanc-del:hover { color: var(--accent); }
+
+    .orc-item {
+      margin-bottom: 14px;
+    }
+
+    .orc-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .orc-name  { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .orc-vals  { font-size: 12px; color: var(--text2); }
+    .orc-over  { color: var(--accent); }
+
+    .orc-bar-wrap {
+      height: 5px; background: var(--s4);
+      border-radius: 3px; overflow: hidden;
+    }
+
+    .orc-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+    .fin-month-sel {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .month-btn {
+      background: var(--s3); border: 1px solid var(--border);
+      border-radius: 7px; color: var(--text2);
+      cursor: pointer; font-size: 16px; line-height: 1;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .month-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .month-label { font-size: 14px; font-weight: 700; min-width: 130px; text-align: center; }
   </style>
 </head>
 <body>
@@ -801,6 +894,9 @@
   </div>
   <div class="nav-item" onclick="navigate('trabalho')">
     <span class="nav-icon">💼</span> Trabalho
+  </div>
+  <div class="nav-item" onclick="navigate('financeiro')">
+    <span class="nav-icon">💵</span> Financeiro
   </div>
 
   <div class="sidebar-footer">
@@ -1003,6 +1099,54 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- FINANCEIRO                                          -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="view" id="view-financeiro">
+    <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div class="page-title">Financeiro</div>
+        <div class="page-sub">Receitas, gastos e orçamento</div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:6px" onclick="openLancModal()">+ Lançamento</button>
+    </div>
+
+    <div class="scroll-body" style="margin-top:20px">
+
+      <!-- Navegação de mês -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div class="fin-month-sel">
+          <button class="month-btn" onclick="finChangeMonth(-1)">‹</button>
+          <div class="month-label" id="finMonthLabel"></div>
+          <button class="month-btn" onclick="finChangeMonth(1)">›</button>
+        </div>
+        <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="openOrcModal()">⚙️ Orçamentos</button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="fin-summary" id="finSummary"></div>
+
+      <!-- Grid: lançamentos + orçamento -->
+      <div class="fin-grid">
+        <div class="card" style="background:var(--s2)">
+          <div class="section-hd">
+            <div class="section-title">Lançamentos</div>
+            <span class="badge" id="finLancBadge">0</span>
+          </div>
+          <div id="finLancList"></div>
+        </div>
+
+        <div class="card" style="background:var(--s2)">
+          <div class="section-hd">
+            <div class="section-title">Orçamento</div>
+          </div>
+          <div id="finOrcList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <!-- ═══════════════════════════════════════════════════════ -->
@@ -1154,6 +1298,88 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL: LANÇAMENTO                                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="overlay" id="overlay-lanc" onclick="closeOverlay('lanc',event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Novo Lançamento</div>
+      <button class="close-btn" onclick="closeOverlay('lanc')">×</button>
+    </div>
+
+    <div class="f-group">
+      <label class="f-label">Tipo</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <label style="display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer">
+          <input type="radio" name="lancTipo" value="entrada" id="r-entrada" style="accent-color:var(--green)">
+          <span style="font-size:14px;font-weight:600;color:var(--green)">↑ Entrada</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer">
+          <input type="radio" name="lancTipo" value="saida" id="r-saida" checked style="accent-color:var(--accent)">
+          <span style="font-size:14px;font-weight:600;color:var(--accent)">↓ Saída</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="f-group">
+      <label class="f-label">Descrição</label>
+      <input class="f-input" id="l-desc" placeholder="Ex: Supermercado, Salário...">
+    </div>
+
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Valor (R$)</label>
+        <input class="f-input" type="number" step="0.01" id="l-valor" placeholder="0,00">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Data</label>
+        <input class="f-input" type="date" id="l-data">
+      </div>
+    </div>
+
+    <div class="f-group">
+      <label class="f-label">Categoria</label>
+      <select class="f-select" id="l-cat">
+        <option value="Salário">💼 Salário</option>
+        <option value="Freelance">💻 Freelance</option>
+        <option value="Investimentos">📈 Investimentos</option>
+        <option value="Alimentação">🍔 Alimentação</option>
+        <option value="Moradia">🏠 Moradia</option>
+        <option value="Transporte">🚗 Transporte</option>
+        <option value="Saúde">❤️ Saúde</option>
+        <option value="Educação">📚 Educação</option>
+        <option value="Lazer">🎉 Lazer</option>
+        <option value="Assinaturas">📱 Assinaturas</option>
+        <option value="Outros">📦 Outros</option>
+      </select>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverlay('lanc')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveLancamento()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL: ORÇAMENTO                                       -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="overlay" id="overlay-orc" onclick="closeOverlay('orc',event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Definir Orçamento</div>
+      <button class="close-btn" onclick="closeOverlay('orc')">×</button>
+    </div>
+    <div class="page-sub" style="margin-bottom:16px;font-size:13px;color:var(--text2)" id="orcMonthLabel"></div>
+    <div id="orc-form-list"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverlay('orc')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveOrcamentos()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOAST ─────────────────────────────────────────────── -->
 <div class="toast" id="toast">
   <span id="toast-icon">✅</span>
@@ -1173,10 +1399,11 @@ const LS = {
 }
 
 let data = {
-  tasks:    LS.get('tasks')    || { dia: [], semana: [], mes: [] },
-  treinos:  LS.get('treinos')  || [],
-  metas:    LS.get('metas')    || [],
-  projetos: LS.get('projetos') || [],
+  tasks:      LS.get('tasks')      || { dia: [], semana: [], mes: [] },
+  treinos:    LS.get('treinos')    || [],
+  metas:      LS.get('metas')      || [],
+  projetos:   LS.get('projetos')   || [],
+  financeiro: LS.get('financeiro') || { lancamentos: [], orcamentos: [] },
 }
 
 // Migrate old metas format (array of {nome,desc,...}) to new format
@@ -1186,10 +1413,11 @@ if (data.metas.length && data.metas[0].nome !== undefined) {
 }
 
 function save() {
-  LS.set('tasks',    data.tasks)
-  LS.set('treinos',  data.treinos)
-  LS.set('metas',    data.metas)
-  LS.set('projetos', data.projetos)
+  LS.set('tasks',      data.tasks)
+  LS.set('treinos',    data.treinos)
+  LS.set('metas',      data.metas)
+  LS.set('projetos',   data.projetos)
+  LS.set('financeiro', data.financeiro)
 }
 
 // ── NAVIGATION ────────────────────────────────────────────
@@ -1201,9 +1429,8 @@ function navigate(view) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
   document.getElementById('view-' + view).classList.add('active')
   document.querySelectorAll('.nav-item').forEach(n => {
-    if (n.textContent.toLowerCase().includes(view === 'hoje' ? 'hoje' :
-        view === 'tarefas' ? 'tarefa' : view === 'treinos' ? 'treino' :
-        view === 'metas' ? 'meta' : 'trabalho')) n.classList.add('active')
+    const map = { hoje:'hoje', tarefas:'tarefa', treinos:'treino', metas:'meta', trabalho:'trabalho', financeiro:'financeiro' }
+    if (n.textContent.toLowerCase().includes(map[view] || view)) n.classList.add('active')
   })
   currentView = view
   render(view)
@@ -1221,11 +1448,12 @@ function switchTab(view, tab, el) {
 
 // ── RENDER ────────────────────────────────────────────────
 function render(view) {
-  if (view === 'hoje')     renderHoje()
-  if (view === 'tarefas')  renderTarefas()
-  if (view === 'treinos')  renderTreinos()
-  if (view === 'metas')    renderMetas()
-  if (view === 'trabalho') renderTrabalho()
+  if (view === 'hoje')       renderHoje()
+  if (view === 'tarefas')   renderTarefas()
+  if (view === 'treinos')   renderTreinos()
+  if (view === 'metas')     renderMetas()
+  if (view === 'trabalho')  renderTrabalho()
+  if (view === 'financeiro') renderFinanceiro()
 }
 
 // ── HOJE ──────────────────────────────────────────────────
@@ -1804,6 +2032,194 @@ function formatDate(dateStr) {
   if (!dateStr) return ''
   const [y, m, d] = dateStr.split('-')
   return `${d}/${m}/${y}`
+}
+
+// ── FINANCEIRO ────────────────────────────────────────────
+const FIN_CATS = [
+  { id: 'Alimentação',  icon: '🍔', color: '#f97316' },
+  { id: 'Moradia',      icon: '🏠', color: '#3b82f6' },
+  { id: 'Transporte',   icon: '🚗', color: '#06b6d4' },
+  { id: 'Saúde',        icon: '❤️',  color: '#e11d48' },
+  { id: 'Educação',     icon: '📚', color: '#8b5cf6' },
+  { id: 'Lazer',        icon: '🎉', color: '#eab308' },
+  { id: 'Assinaturas',  icon: '📱', color: '#ec4899' },
+  { id: 'Outros',       icon: '📦', color: '#777777' },
+]
+
+let finMonth = new Date().getMonth()
+let finYear  = new Date().getFullYear()
+
+const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
+
+function finChangeMonth(dir) {
+  finMonth += dir
+  if (finMonth > 11) { finMonth = 0; finYear++ }
+  if (finMonth < 0)  { finMonth = 11; finYear-- }
+  renderFinanceiro()
+}
+
+function finKey() { return `${finYear}-${String(finMonth+1).padStart(2,'0')}` }
+
+function renderFinanceiro() {
+  document.getElementById('finMonthLabel').textContent = `${MONTHS_PT[finMonth]} ${finYear}`
+
+  const key  = finKey()
+  const fin  = data.financeiro
+  const lancs = fin.lancamentos.filter(l => l.data.startsWith(key))
+  const orcs  = fin.orcamentos.filter(o => o.mes === key)
+
+  // Resumo
+  const receitas = lancs.filter(l => l.tipo === 'entrada').reduce((s,l) => s + l.valor, 0)
+  const gastos   = lancs.filter(l => l.tipo === 'saida').reduce((s,l) => s + l.valor, 0)
+  const saldo    = receitas - gastos
+
+  document.getElementById('finSummary').innerHTML = `
+    <div class="fin-stat">
+      <div class="fin-stat-label">Receitas</div>
+      <div class="fin-stat-value" style="color:var(--green)">${fmtMoney(receitas)}</div>
+      <div class="fin-stat-sub">${lancs.filter(l=>l.tipo==='entrada').length} lançamentos</div>
+    </div>
+    <div class="fin-stat">
+      <div class="fin-stat-label">Gastos</div>
+      <div class="fin-stat-value" style="color:var(--accent)">${fmtMoney(gastos)}</div>
+      <div class="fin-stat-sub">${lancs.filter(l=>l.tipo==='saida').length} lançamentos</div>
+    </div>
+    <div class="fin-stat" style="border-color:${saldo>=0?'rgba(34,197,94,0.2)':'rgba(225,29,72,0.2)'}">
+      <div class="fin-stat-label">Saldo</div>
+      <div class="fin-stat-value" style="color:${saldo>=0?'var(--green)':'var(--accent)'}">${fmtMoney(saldo)}</div>
+      <div class="fin-stat-sub">${saldo >= 0 ? 'Positivo ✓' : 'Negativo ✗'}</div>
+    </div>`
+
+  // Badge
+  document.getElementById('finLancBadge').textContent = lancs.length
+
+  // Lançamentos
+  const listEl = document.getElementById('finLancList')
+  if (lancs.length === 0) {
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">💸</div>Nenhum lançamento</div>`
+  } else {
+    const sorted = [...lancs].sort((a,b) => b.data.localeCompare(a.data))
+    listEl.innerHTML = sorted.map(l => {
+      const cat  = FIN_CATS.find(c => c.id === l.categoria) || { icon:'📦', color:'#777' }
+      const isEnt = l.tipo === 'entrada'
+      return `
+      <div class="lancamento-item">
+        <div class="lanc-icon" style="background:${cat.color}22">${cat.icon}</div>
+        <div class="lanc-info">
+          <div class="lanc-desc">${l.descricao}</div>
+          <div class="lanc-meta">${l.categoria} · ${formatDate(l.data)}</div>
+        </div>
+        <div class="lanc-valor" style="color:${isEnt ? 'var(--green)' : 'var(--accent)'}">
+          ${isEnt ? '+' : '-'}${fmtMoney(l.valor)}
+        </div>
+        <button class="lanc-del" onclick="deleteLancamento('${l.id}')">×</button>
+      </div>`
+    }).join('')
+  }
+
+  // Orçamento
+  const orcEl = document.getElementById('finOrcList')
+  const spendByCat = {}
+  lancs.filter(l => l.tipo === 'saida').forEach(l => {
+    spendByCat[l.categoria] = (spendByCat[l.categoria] || 0) + l.valor
+  })
+
+  const orcCats = FIN_CATS.filter(c => orcs.find(o => o.categoria === c.id) || spendByCat[c.id])
+  if (orcCats.length === 0) {
+    orcEl.innerHTML = `<div class="empty"><div class="empty-icon">📊</div>Configure orçamentos pelo botão ⚙️</div>`
+  } else {
+    orcEl.innerHTML = orcCats.map(cat => {
+      const orc   = orcs.find(o => o.categoria === cat.id)
+      const limite = orc ? orc.limite : 0
+      const gasto  = spendByCat[cat.id] || 0
+      const pct    = limite > 0 ? Math.min((gasto / limite) * 100, 100) : 0
+      const over   = limite > 0 && gasto > limite
+      return `
+      <div class="orc-item">
+        <div class="orc-header">
+          <div class="orc-name">${cat.icon} ${cat.id}</div>
+          <div class="orc-vals ${over ? 'orc-over' : ''}">
+            ${fmtMoney(gasto)}${limite > 0 ? ` / ${fmtMoney(limite)}` : ''}
+          </div>
+        </div>
+        <div class="orc-bar-wrap">
+          <div class="orc-bar-fill" style="width:${pct}%;background:${over ? 'var(--accent)' : cat.color}"></div>
+        </div>
+      </div>`
+    }).join('')
+  }
+}
+
+function openLancModal() {
+  const today = new Date().toISOString().split('T')[0]
+  document.getElementById('r-saida').checked = true
+  document.getElementById('l-desc').value    = ''
+  document.getElementById('l-valor').value   = ''
+  document.getElementById('l-data').value    = today
+  document.getElementById('l-cat').value     = 'Alimentação'
+  document.getElementById('overlay-lanc').classList.add('open')
+  setTimeout(() => document.getElementById('l-desc').focus(), 100)
+}
+
+function saveLancamento() {
+  const desc  = document.getElementById('l-desc').value.trim()
+  const valor = parseFloat(document.getElementById('l-valor').value)
+  const data_  = document.getElementById('l-data').value
+  if (!desc)        { toast('Informe a descrição!', '⚠️'); return }
+  if (!valor || valor <= 0) { toast('Informe o valor!', '⚠️'); return }
+  if (!data_)       { toast('Informe a data!', '⚠️'); return }
+
+  const tipo = document.querySelector('input[name="lancTipo"]:checked').value
+  data.financeiro.lancamentos.push({
+    id: uid(), tipo, descricao: desc, valor,
+    data: data_,
+    categoria: document.getElementById('l-cat').value,
+  })
+  save()
+  closeOverlay('lanc')
+  renderFinanceiro()
+  toast('Lançamento salvo!', tipo === 'entrada' ? '💰' : '💸')
+}
+
+function deleteLancamento(id) {
+  data.financeiro.lancamentos = data.financeiro.lancamentos.filter(l => l.id !== id)
+  save()
+  renderFinanceiro()
+}
+
+function openOrcModal() {
+  document.getElementById('orcMonthLabel').textContent = `${MONTHS_PT[finMonth]} ${finYear}`
+  const key  = finKey()
+  const orcs = data.financeiro.orcamentos.filter(o => o.mes === key)
+  document.getElementById('orc-form-list').innerHTML = FIN_CATS.map(cat => {
+    const orc = orcs.find(o => o.categoria === cat.id)
+    return `
+    <div class="f-group" style="display:flex;align-items:center;gap:12px">
+      <label style="font-size:13px;font-weight:600;width:130px;flex-shrink:0">${cat.icon} ${cat.id}</label>
+      <input class="f-input" type="number" step="1" id="orc-${cat.id}"
+        placeholder="Sem limite" value="${orc ? orc.limite : ''}">
+    </div>`
+  }).join('')
+  document.getElementById('overlay-orc').classList.add('open')
+}
+
+function saveOrcamentos() {
+  const key = finKey()
+  data.financeiro.orcamentos = data.financeiro.orcamentos.filter(o => o.mes !== key)
+  FIN_CATS.forEach(cat => {
+    const val = parseFloat(document.getElementById('orc-' + cat.id)?.value)
+    if (val > 0) {
+      data.financeiro.orcamentos.push({ id: uid(), mes: key, categoria: cat.id, limite: val })
+    }
+  })
+  save()
+  closeOverlay('orc')
+  renderFinanceiro()
+  toast('Orçamentos salvos!', '📊')
+}
+
+function fmtMoney(v) {
+  return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 // ── BOOT ──────────────────────────────────────────────────
