@@ -1040,24 +1040,53 @@
     </div>
 
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('treinos','academia',this)">🏋️ Academia</div>
+      <div class="tab active" onclick="switchTab('treinos','dia',this)">📅 Dia</div>
+      <div class="tab" onclick="switchTab('treinos','semana',this)">📆 Semana</div>
+      <div class="tab" onclick="switchTab('treinos','mes',this)">🗓️ Mês</div>
+      <div style="width:1px;background:var(--border);margin:8px 4px"></div>
+      <div class="tab" onclick="switchTab('treinos','academia',this)">🏋️ Academia</div>
       <div class="tab" onclick="switchTab('treinos','corrida',this)">🏃 Corrida</div>
       <div class="tab" onclick="switchTab('treinos','bike',this)">🚴 Bike</div>
     </div>
 
     <div class="scroll-body">
-      <div class="tab-content active" id="tab-treinos-academia">
+
+      <!-- Período: Dia -->
+      <div class="tab-content active" id="tab-treinos-dia">
+        <div id="treino-period-stats-dia" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px"></div>
+        <div id="treino-period-list-dia"></div>
+      </div>
+
+      <!-- Período: Semana -->
+      <div class="tab-content" id="tab-treinos-semana">
+        <div id="treino-period-stats-semana" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px"></div>
+        <div id="treino-period-list-semana"></div>
+      </div>
+
+      <!-- Período: Mês -->
+      <div class="tab-content" id="tab-treinos-mes">
+        <div id="treino-period-stats-mes" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px"></div>
+        <div id="treino-period-list-mes"></div>
+      </div>
+
+      <!-- Tipo: Academia -->
+      <div class="tab-content" id="tab-treinos-academia">
         <div id="stats-academia" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px"></div>
         <div id="list-academia"></div>
       </div>
+
+      <!-- Tipo: Corrida -->
       <div class="tab-content" id="tab-treinos-corrida">
         <div id="stats-corrida" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px"></div>
         <div id="list-corrida"></div>
       </div>
+
+      <!-- Tipo: Bike -->
       <div class="tab-content" id="tab-treinos-bike">
         <div id="stats-bike" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px"></div>
         <div id="list-bike"></div>
       </div>
+
     </div>
   </div>
 
@@ -1443,7 +1472,10 @@ function switchTab(view, tab, el) {
   document.getElementById(prefix + tab).classList.add('active')
   document.querySelectorAll(`#view-${view} .tab`).forEach(t => t.classList.remove('active'))
   el.classList.add('active')
-  if (view === 'treinos') renderTreinosTab(tab)
+  if (view === 'treinos') {
+    if (['dia','semana','mes'].includes(tab)) renderTreinosPeriod(tab)
+    else renderTreinosTab(tab)
+  }
 }
 
 // ── RENDER ────────────────────────────────────────────────
@@ -1606,7 +1638,74 @@ function deleteTask(scope, id) {
 
 // ── TREINOS ───────────────────────────────────────────────
 function renderTreinos() {
-  renderTreinosTab('academia')
+  renderTreinosPeriod('dia')
+}
+
+function renderTreinosPeriod(period) {
+  const now   = new Date()
+  const today = now.toISOString().split('T')[0]
+
+  const startOfWeek = new Date(now)
+  startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1))
+  const weekStart = startOfWeek.toISOString().split('T')[0]
+
+  const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`
+
+  const icons  = { academia:'🏋️', corrida:'🏃', bike:'🚴' }
+  const colors = { academia:'#e11d48', corrida:'#22c55e', bike:'#f97316' }
+
+  let filtered = []
+  let periodLabel = ''
+  if (period === 'dia') {
+    filtered = data.treinos.filter(t => t.data === today)
+    periodLabel = 'Hoje'
+  } else if (period === 'semana') {
+    filtered = data.treinos.filter(t => t.data >= weekStart && t.data <= today)
+    periodLabel = 'Esta Semana'
+  } else if (period === 'mes') {
+    filtered = data.treinos.filter(t => t.data.startsWith(monthKey))
+    periodLabel = 'Este Mês'
+  }
+
+  const totalMin = filtered.reduce((s,t) => s + (Number(t.duracao)||0), 0)
+  const totalKm  = filtered.reduce((s,t) => s + (Number(t.distancia)||0), 0)
+  const byType   = { academia: filtered.filter(t=>t.tipo==='academia').length,
+                     corrida:  filtered.filter(t=>t.tipo==='corrida').length,
+                     bike:     filtered.filter(t=>t.tipo==='bike').length }
+
+  document.getElementById(`treino-period-stats-${period}`).innerHTML = [
+    { label:'Sessões',     value: filtered.length, icon:'📋', color:'var(--accent)' },
+    { label:'Minutos',     value: totalMin,         icon:'⏱️', color:'var(--blue)' },
+    { label:'Distância',   value: totalKm.toFixed(1)+'km', icon:'📍', color:'var(--green)' },
+    { label:'Tipos',       value: Object.entries(byType).filter(([,v])=>v>0).map(([k,v])=>`${icons[k]} ${v}`).join('  ')||'—', icon:'', color:'var(--text2)' },
+  ].map(s => `
+    <div class="stat-card">
+      <div class="stat-label">${s.icon} ${s.label}</div>
+      <div class="stat-value" style="color:${s.color};font-size:${typeof s.value==='string'&&s.value.length>4?'16px':'26px'}">${s.value}</div>
+    </div>`).join('')
+
+  const listEl = document.getElementById(`treino-period-list-${period}`)
+  if (filtered.length === 0) {
+    const msgs = { dia:'Nenhum treino hoje', semana:'Nenhum treino nesta semana', mes:'Nenhum treino neste mês' }
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">💪</div>${msgs[period]}</div>`
+    return
+  }
+
+  const sorted = [...filtered].sort((a,b) => b.data.localeCompare(a.data))
+  listEl.innerHTML = sorted.map(t => `
+    <div class="workout-item">
+      <div class="workout-icon" style="background:${colors[t.tipo]}22">${icons[t.tipo]}</div>
+      <div class="workout-info">
+        <div class="workout-title">${t.titulo || t.tipo}</div>
+        <div class="workout-meta">
+          ${t.duracao ? `⏱️ ${t.duracao} min` : ''}
+          ${t.distancia ? ` · 📍 ${t.distancia} km` : ''}
+          ${t.notas ? ` · ${t.notas}` : ''}
+        </div>
+        <div class="workout-date">${formatDate(t.data)}</div>
+      </div>
+      <button onclick="deleteTreino('${t.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px">×</button>
+    </div>`).join('')
 }
 
 function renderTreinosTab(tipo) {
@@ -1697,9 +1796,15 @@ function saveTreino() {
 function deleteTreino(id) {
   data.treinos = data.treinos.filter(t => t.id !== id)
   save()
-  const activeTab = document.querySelector('#view-treinos .tab.active').textContent.toLowerCase()
-  const tipo = activeTab.includes('academia') ? 'academia' : activeTab.includes('corrida') ? 'corrida' : 'bike'
-  renderTreinosTab(tipo)
+  const activeTab = document.querySelector('#view-treinos .tab.active')?.textContent.toLowerCase() || ''
+  if (activeTab.includes('academia') || activeTab.includes('corrida') || activeTab.includes('bike')) {
+    const tipo = activeTab.includes('academia') ? 'academia' : activeTab.includes('corrida') ? 'corrida' : 'bike'
+    renderTreinosTab(tipo)
+  } else {
+    const period = activeTab.includes('semana') ? 'semana' : activeTab.includes('mês') || activeTab.includes('mes') ? 'mes' : 'dia'
+    renderTreinosPeriod(period)
+  }
+  if (currentView === 'hoje') renderHoje()
 }
 
 // ── METAS ─────────────────────────────────────────────────
